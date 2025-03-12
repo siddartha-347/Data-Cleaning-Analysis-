@@ -70,7 +70,7 @@ After completing these cleaning steps, I did a final check for duplicates or bla
 
 ---
 
-## 3. One-Variable (Univariate) Analysis
+## 3. Univariate Analysis
 
 **Purpose:**\
 To understand the distribution and key characteristics of each individual variable.
