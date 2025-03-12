@@ -1,162 +1,206 @@
+# Data Cleaning and Analysis of movies.csv
 
-# Data Cleaning and Data Analysis of movies.csv
-
-This repository deals with the data cleaning and univariate , bivariate and multivariate analysis on movies data set found in kaggle
+This repository covers the data cleaning and analysis of the movies dataset from Kaggle. It includes univariate, bivariate, and multivariate analysis to understand the characteristics and relationships in the data.
 
 ---
 
 ## 1. Data Preparation and First Look
 
-- **Collecting the Data:**\
-  I started by importing the `movies.csv` file using pandas.
+### Collecting the Data
+- Imported the **movies.csv** file using pandas.
 
-- **First Look:**\
-  I used functions like `.head()`, `.info()`, and `.describe()` to quickly check:
-
-  - How many rows and columns the dataset has
-  - The overall data size and data types\
-    This initial inspection helped me spot issues such as extra columns, missing values, and incorrect data formats.
+### First Look
+- Used `.head()`, `.info()`, and `.describe()` to quickly check:
+  - Number of rows and columns.
+  - Data types and overall size.
+- This helped identify issues such as extra columns, missing values, and incorrect formats.
 
 ---
 
 ## 2. Data Cleaning
 
-### a. Dealing with Missing Values and Duplicates
-
-- **Checking for Issues:**\
-  I ran `.isnull()` to find missing values and `.duplicated()` to catch any duplicate records.
-
-  - **Key Observation:** The "gross" column had almost 95% missing values.
-
-- **Handling Missing Values:**
-
-  - **Ratings:**\
-    Missing ratings were replaced by calculating the average rating for each film genre. This way, if a movie didn’t have a rating, it received the average rating of its genre.
-
-  - **Votes:**\
-    For the votes column, I used a similar approach—except I grouped the data by cast details. By computing an average number of votes for each cast group, I filled in the missing entries.
-
-- **Removing Duplicates:**\
-  I removed duplicate observations to ensure every movie was only represented once, preventing any bias in the analysis.
+### a. Handling Missing Values and Duplicates
+- **Checking for Issues:**
+  - Used `.isnull()` to identify missing values.
+  - Used `.duplicated()` to find duplicate records.
+- **Key Observation:**
+  - The "gross" column had almost 95% missing values.
+- **Handling Missing Data:**
+  - **Ratings:** Missing ratings were filled with the average rating of the movie’s genre.
+  - **Votes:** Filled missing votes by calculating the average votes for each cast group.
+- **Removing Duplicates:**
+  - Duplicate entries were removed to ensure each movie appears only once.
 
 ### b. Data Type Conversions
-
-- **Votes Column:**\
-  The votes were initially stored as text (with commas). I stripped out the commas and converted these values into integers.
-
-- **Other Conversions:**\
-  I made sure that all numerical columns were properly formatted (as integers or decimals) and that date columns were converted to datetime objects when needed.
+- **Votes Column:**
+  - Removed commas and converted votes from text to integers.
+- **Other Conversions:**
+  - Ensured numerical columns were properly formatted.
+  - Converted date columns to datetime objects when needed.
 
 ### c. Dropping and Engineering Columns
+- **Removing the Gross Column:**
+  - Dropped due to excessive missing values.
+- **Year Columns:**
+  - Split the original year column into “From Year” (start) and “To Year” (end).
+  - Defaulted missing end years to 2025 and set single year entries to both columns.
+- **Populating Missing Runtime:**
+  - Estimated runtime based on "From Year" and "To Year" data and filled in missing values.
 
-- **Removing the Gross Column:**\
-  Since the "gross" column had nearly 95% missing values and little useful information, I dropped it from the dataset.
-
-- **Splitting and Completing the Year Columns:**\
-  I split the original year column into two new columns:
-
-  - **From Year:** The year the movie started.
-  - **To Year:** The year the movie ended.
-    - If no end year was specified, I defaulted it to 2025.
-    - If only one date was provided, I set both the "from" and "to" year to that same value.
-  - For any missing values in these year columns, I calculated an average runtime from movies with complete data and used that average to fill the gaps.
-
-- **Populating Missing Runtime:**\
-  I used the "from year" and "to year" information to estimate an average runtime for movies within the same period, and then I filled in any missing runtime values accordingly.
-
-### d. Last Data Review
-
-After completing these cleaning steps, I did a final check for duplicates or blank values and removed any problematic rows. The result? A clean dataset of **6,745 rows and 9 columns**, all set for further analysis.
+### d. Final Data Review
+- Conducted a final check to remove any remaining duplicates or blank rows.
+- **Clean Dataset:** 6,745 rows and 9 columns ready for analysis.
 
 ---
 
 ## 3. Univariate Analysis
 
-**Purpose:**\
-To understand the distribution and key characteristics of each individual variable.
+The goal was to understand the distribution and key features of individual variables.
 
-- **Histograms:**
+### Histograms & Box Plots (Continuous Variables)
+- **Histograms:**  
+  - Plotted for rating, runtime, and revenue to show the data distribution.
+- **Box Plots:**  
+  - Highlighted medians, quartiles, and outliers.
 
-  - I plotted histograms for continuous variables like rating, runtime, and revenue.
-  - **Why:** Histograms show how many movies fall within specific value ranges and help identify if the data is skewed (e.g., many movies with low ratings and a few with very high ratings).
+### Bar Charts (Categorical Variables)
+- **Bar Charts:**  
+  - Used for genres to show the frequency of each category.
 
-- **Box Plots:**
+### Key Findings
 
-  - I used box plots to display the median, quartiles, and any remaining outliers.
-  - **Why:** A neat box plot confirms that the data spread is controlled and that any extreme values have been appropriately handled.
+#### A. Movie Ratings
+- **Distribution:**  
+  - KDE plot shows a single peak with most ratings between 5 and 8, peaking around 7.
+- **Interpretation:**  
+  - Most movies get average to good ratings; very few receive extreme scores.
+- **Central Tendency:**  
+  - **Mean:** 6.63  
+  - **Median:** 6.70  
+  - **Mode:** 7.20 (suggested by the KDE peak)
+- **Skewness:**  
+  - Slightly left-skewed due to a few very low ratings.
 
-- **Bar Charts:**
+#### B. Votes
+- **Distribution:**  
+  - Highly right-skewed: most movies have few votes, while a few blockbusters get millions.
+- **Interpretation:**  
+  - A few movies gain mass attention, while most have limited engagement.
+- **Central Tendency:**  
+  - **Mean:** 20,385 votes  
+  - **Median:** 1,975 votes  
+  - **Mode:** ~20,385 votes (influenced by blockbusters)
+- **Skewness:**  
+  - Extremely right-skewed with a long tail.
 
-  - I created bar charts for categorical features like movie genres.
-  - **Why:** Bar charts clearly show which genres are most common, offering a quick look at how the films are distributed across categories.
+#### C. Runtime
+- **Distribution:**  
+  - Most movies run between 80 and 120 minutes, though the mean is lower (~77.94 minutes) due to some very short and very long movies.
+- **Interpretation:**  
+  - Indicates the typical film length; outliers include short films and extended features.
+- **Central Tendency:**  
+  - **Mean:** 77.94 minutes  
+  - **Median:** 81 minutes  
+  - **Mode:** 90.56 minutes
+- **Skewness:**  
+  - Right-skewed with long outliers affecting the mean.
+
+#### D. Genres
+- **Findings:**  
+  - **Drama** is the most common genre, followed by **Comedy** and **Action**.
+  - Genres like **Musical**, **Game-Show**, **Talk-Show**, **News**, and **Film-Noir** are less frequent.
+- **Interpretation:**  
+  - Dominance of Drama suggests a focus on storytelling, while Comedy and Action are popular for their wide appeal.
 
 ---
 
 ## 4. Bivariate Analysis
 
-**Purpose:**\
-To explore the relationships between pairs of variables.
+Explored relationships between pairs of variables using scatter plots, 2D histograms, density plots, KDE plots, bar graphs, and box plots.
 
-- **Scatter Plots:**
+### Key Relationships
 
-  - I plotted pairs such as rating vs. runtime and rating vs. revenue.
-  - **Why:** Scatter plots visually reveal if there’s any relationship between two continuous variables. A straight-line trend suggests a strong relationship, while a scattered plot points to a weak or non-linear one.
+1. **Rating vs. Votes**
+   - **Plot & Correlation:**  
+     - Scatter plot shows a wide spread with a weak positive correlation (~0.10).
+   - **Interpretation:**  
+     - Higher-rated movies tend to get slightly more votes, but many other factors influence popularity.
 
-- **Grouped Bar Charts:**
+2. **Rating vs. Runtime**
+   - **Plot & Correlation:**  
+     - Weak negative correlation (~-0.26) with a scattered plot.
+   - **Interpretation:**  
+     - Longer movies tend to have slightly lower ratings, but runtime alone doesn't strongly affect quality.
 
-  - I used grouped bar charts to compare average values across different groups (for example, average revenue per genre).
-  - **Why:** These charts help identify trends—like which genres tend to earn more—which is valuable for market analysis and understanding audience preferences.
+3. **Votes vs. Runtime**
+   - **Plot & Correlation:**  
+     - Near-zero correlation (~0.09).
+   - **Interpretation:**  
+     - The number of votes is not affected by a movie’s length, suggesting other factors drive popularity.
+
+4. **Genre vs. Rating**
+   - **Box Plot:**  
+     - Shows how ratings vary across genres.
+   - **Interpretation:**  
+     - Some genres (e.g., Documentary, Drama) have higher median ratings; others show more variability.
+
+5. **Genre vs. Votes**
+   - **Box Plot:**  
+     - Highlights vote counts by genre.
+   - **Interpretation:**  
+     - Mainstream genres like Action and Adventure attract more votes; niche genres get fewer.
+
+6. **Genre vs. Runtime**
+   - **Box Plot:**  
+     - Compares runtime across genres.
+   - **Interpretation:**  
+     - Certain genres (e.g., Documentary) tend to be shorter, while others (e.g., War, Sci-Fi) are longer.
+
+7. **Year Difference vs. Runtime**
+   - **Bar Plot:**  
+     - Shows how runtime may change with the movie's age.
+   - **Interpretation:**  
+     - Older movies might be shorter due to past trends, or newer films might be longer; the pattern is not clear-cut.
 
 ---
 
 ## 5. Multivariate Analysis
 
-**Purpose:**\
-To understand how several variables interact with each other at once.
+Used advanced methods like correlation heat maps, pair plots, 3D scatter plots, PCA, and clustering.
 
-- **Correlation Heatmap:**
+### Findings
 
-  - I built a heatmap to measure the strength and direction of relationships between key numerical features (like rating, runtime, revenue, and votes).
-  - **Why:** Each cell shows a correlation coefficient (from –1 to 1). In this case, most coefficients were low, meaning that changes in one variable do not strongly predict changes in another.
+- **Correlation Analysis:**  
+  - Very low correlations between **RATING**, **VOTES**, and **Runtime** (near-zero values).
+  - **Interpretation:**  
+    - Each variable is almost independent; knowing one does not help predict another.
 
-- **Pair Plots:**
+- **PCA (Principal Component Analysis):**  
+  - Explained variance is nearly evenly distributed:
+    - **PC1:** 34.28%
+    - **PC2:** 33.61%
+    - **PC3:** 32.11%
+  - **Interpretation:**  
+    - No single component captures most of the variance; the variables are independent, and PCA doesn’t reduce dimensions effectively.
 
-  - I generated pair plots to visually inspect how every pair of variables interacts.
-  - **Why:** These plots confirmed the heatmap’s findings by showing weak relationships and signs of multicollinearity—where some variables are redundant. This indicates that while the dataset is great for simpler analyses, it might need further work (or extra data) to support more complex multivariate models.
+- **PCA Visualization:**  
+  - A 2D scatter plot of **RATING** against **PC1** and **PC2** shows a gradient but no clear clusters.
+  - **Interpretation:**  
+    - The apparent gradient is misleading; there are no distinct groups.
 
----
+- **Clustering:**  
+  - K-Means clustering (with 2 clusters) resulted in a low silhouette score (0.237).
+  - **Interpretation:**  
+    - Poor cluster separation indicates that natural groupings are not present in the dataset.
 
-## 6. Overall Inferences
-
-### Data Cleaning Summary
-
-- **What Was Done:**
-  - Removed unnecessary columns (like "gross") and duplicates.
-  - Filled missing values carefully:
-    - Ratings were imputed using genre averages.
-    - Votes were imputed using cast details.
-    - Year columns were completed using averages calculated from movies with full year data.
-    - Runtime was filled using estimates from the "from year" and "to year" information.
-  - Corrected data types and engineered new columns by splitting the year information.
-
-### Analysis Takeaways
-
-- **Univariate Analysis:**
-
-  - Histograms and box plots revealed the distribution, skewness, and spread of each variable, with outliers handled appropriately.
-  - Bar charts highlighted which film genres were most common.
-
-- **Bivariate Analysis:**
-
-  - Scatter plots and grouped bar charts illustrated pairwise relationships, though many relationships were relatively weak.
-
-- **Multivariate Analysis:**
-
-  - The correlation heatmap and pair plots showed generally weak relationships between variables and some multicollinearity, suggesting that the dataset is best suited for simpler analyses rather than complex multivariate models.
-
-### Final Thoughts
-
-By carefully cleaning and enriching the dataset—handling missing values with thoughtful strategies (using genre for ratings, cast details for votes, and calculated averages for year and runtime), removing duplicates, and creating useful new columns—I produced a dataset with **6,745 rows and 9 columns**. The univariate and bivariate analyses offered clear insights into individual distributions and pairwise relationships. However, the weak correlations and redundancy revealed in the multivariate analysis suggest that while the dataset is ready for simple analyses, it might need further refinement or additional data for robust multivariate modeling.
+- **Overall Interpretation:**  
+  - The key movie attributes are independent and not strongly related.
+  - Traditional multivariate methods like PCA and clustering do not uncover meaningful patterns here.
 
 ---
+
+## Conclusion
+
+Univariate,Bivariate,Multivariate analysis reveals that the main features of the movies dataset—ratings, votes, and runtime—mostly operate independently. While ratings generally fall in the moderate range and runtimes cluster around standard lengths, votes are extremely skewed due to a few blockbuster movies. Bivariate analysis shows only weak links among these variables, and multivariate techniques like PCA and clustering fail to extract strong underlying patterns. In short, each attribute appears to be influenced by its own set of factors, making it challenging to find hidden relationships using standard multivariate methods.
+"""
 
